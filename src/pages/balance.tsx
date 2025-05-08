@@ -25,6 +25,7 @@ export default function Balance() {
     const [balance, setBalance] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [activeTab, setActiveTab] = useState('history'); // 'unsettled' or 'history'
 
     // Check if user is authenticated
     useEffect(() => {
@@ -94,11 +95,8 @@ export default function Balance() {
     const unsettledTransactions = transactions.filter(t => !t.settled);
     const settledTransactions = transactions.filter(t => t.settled);
 
-    // Calculate total paid this month
-    const currentDate = new Date();
-    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const totalPaidThisMonth = settledTransactions
-        .filter(t => new Date(t.createdAt) >= firstDayOfMonth)
+    // Calculate total paid overall (for all time)
+    const totalPaidAllTime = settledTransactions
         .reduce((sum, t) => sum + t.total, 0);
 
     return (
@@ -109,112 +107,93 @@ export default function Balance() {
                 </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* My Balance Panel */}
+            <div className="grid grid-cols-1 gap-6">
                 <div className="bg-white rounded-lg shadow overflow-hidden">
-                    <div className="p-4 bg-gray-100 border-b">
-                        <h2 className="text-xl font-bold text-center">My Balance</h2>
-                        <div className="flex mt-2">
-                            <div className="w-1/2 text-center">
-                                <div className="bg-blue-100 py-2 px-4 mx-2 rounded-t-lg">
-                                    <span className="text-blue-800 font-bold">Unsettled</span>
-                                </div>
-                            </div>
-                            <div className="w-1/2 text-center">
-                                <div className="bg-gray-200 py-2 px-4 mx-2 rounded-t-lg">
-                                    <span className="text-gray-600">History</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div className="bg-[#F9F0F5] p-4 text-center">
+                        <h2 className="text-2xl font-bold text-[var(--primary)]">Transaction History</h2>
                     </div>
-                    <div className="p-4">
-                        {unsettledTransactions.length === 0 ? (
-                            <div className="text-center py-6 text-gray-500">
-                                No unsettled transactions
-                            </div>
-                        ) : (
-                            <div className="space-y-2">
-                                {unsettledTransactions.map(transaction => (
-                                    <div key={transaction.id} className="p-3 border rounded-lg">
-                                        <div className="flex justify-between">
-                                            <div className="font-medium">
-                                                {transaction.items.map(item =>
-                                                    `${item.product.name} x${item.quantity}`
-                                                ).join(', ')}
-                                            </div>
-                                            <div className="text-gray-500">
-                                                {formatDate(transaction.createdAt)}
-                                            </div>
-                                        </div>
-                                        <div className="text-right font-bold mt-2 text-[var(--primary)]">
-                                            ${transaction.total.toFixed(2)}
-                                        </div>
-                                    </div>
-                                ))}
-                                <div className="mt-4 py-3 border-t border-gray-200">
-                                    <div className="flex justify-between items-center">
-                                        <span className="font-bold text-xl">Total Balance Due</span>
-                                        <span className="font-bold text-xl text-[var(--primary)]">${balance.toFixed(2)}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
 
-                {/* Transaction History Panel */}
-                <div className="bg-white rounded-lg shadow overflow-hidden">
-                    <div className="p-4 bg-gray-100 border-b">
-                        <h2 className="text-xl font-bold text-center">Transaction History</h2>
-                        <div className="flex mt-2">
-                            <div className="w-1/2 text-center">
-                                <div className="bg-gray-200 py-2 px-4 mx-2 rounded-t-lg">
-                                    <span className="text-gray-600">Unsettled</span>
-                                </div>
-                            </div>
-                            <div className="w-1/2 text-center">
-                                <div className="bg-blue-100 py-2 px-4 mx-2 rounded-t-lg">
-                                    <span className="text-blue-800 font-bold">History</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div className="grid grid-cols-2 text-center font-medium">
+                        <button
+                            onClick={() => setActiveTab('unsettled')}
+                            className={`py-3 ${activeTab === 'unsettled' ? 'bg-[#F9F0F5] text-[var(--primary)]' : 'bg-[#EEEEEE] text-gray-500'}`}
+                        >
+                            Unsettled
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('history')}
+                            className={`py-3 ${activeTab === 'history' ? 'bg-[#E1F1FE] text-blue-600' : 'bg-[#EEEEEE] text-gray-500'}`}
+                        >
+                            History
+                        </button>
                     </div>
+
                     <div className="p-4">
-                        {settledTransactions.length === 0 ? (
-                            <div className="text-center py-6 text-gray-500">
-                                No transaction history
-                            </div>
-                        ) : (
-                            <div className="space-y-2">
-                                {settledTransactions.map(transaction => (
-                                    <div key={transaction.id} className="p-3 border rounded-lg">
-                                        <div className="flex justify-between">
-                                            <div className="font-medium">
-                                                {transaction.items.map(item =>
-                                                    `${item.product.name} x${item.quantity}`
-                                                ).join(', ')}
+                        {activeTab === 'unsettled' ? (
+                            unsettledTransactions.length === 0 ? (
+                                <div className="text-center py-12 text-gray-500">
+                                    No unsettled transactions
+                                </div>
+                            ) : (
+                                <div className="space-y-2">
+                                    {unsettledTransactions.map(transaction => (
+                                        <div key={transaction.id} className="flex justify-between items-center py-3 border-b">
+                                            <div>
+                                                <div className="text-gray-800">
+                                                    {transaction.items.map(item =>
+                                                        `${item.product.name} x${item.quantity}`
+                                                    ).join(', ')}
+                                                </div>
+                                                <div className="text-sm text-gray-500">{formatDate(transaction.createdAt)}</div>
                                             </div>
-                                            <div className="text-gray-500">
-                                                {formatDate(transaction.createdAt)}
-                                            </div>
-                                        </div>
-                                        <div className="flex justify-between items-center mt-2">
-                                            <div className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold">
-                                                PAID
-                                            </div>
-                                            <div className="font-bold">
+                                            <div className="font-bold text-[var(--primary)]">
                                                 ${transaction.total.toFixed(2)}
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
-                                <div className="mt-4 py-3 border-t border-gray-200">
-                                    <div className="flex justify-between items-center">
-                                        <span className="text-gray-600">Total paid this month:</span>
-                                        <span className="font-bold text-green-600">${totalPaidThisMonth.toFixed(2)}</span>
+                                    ))}
+                                    <div className="mt-6 pt-4 border-t border-gray-300">
+                                        <div className="flex justify-between items-center">
+                                            <span className="font-medium text-xl text-gray-700">Total Balance Due</span>
+                                            <span className="font-bold text-xl text-[var(--primary)]">${balance.toFixed(2)}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            )
+                        ) : (
+                            settledTransactions.length === 0 ? (
+                                <div className="text-center py-12 text-gray-500">
+                                    No transaction history
+                                </div>
+                            ) : (
+                                <div>
+                                    {settledTransactions.map(transaction => (
+                                        <div key={transaction.id} className="flex justify-between items-center py-3 border-b">
+                                            <div>
+                                                <div className="text-gray-800">
+                                                    {transaction.items.map(item =>
+                                                        `${item.product.name} x${item.quantity}`
+                                                    ).join(', ')}
+                                                </div>
+                                                <div className="text-sm text-gray-500">{formatDate(transaction.createdAt)}</div>
+                                                <div className="mt-1">
+                                                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold">
+                                                        PAID
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="font-bold text-pink-600">
+                                                ${transaction.total.toFixed(2)}
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <div className="mt-6 py-4 border-t border-gray-300">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-gray-800 font-medium">Total paid:</span>
+                                            <span className="font-bold text-green-600">${totalPaidAllTime.toFixed(2)}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )
                         )}
                     </div>
                 </div>

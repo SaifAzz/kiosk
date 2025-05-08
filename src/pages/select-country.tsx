@@ -77,7 +77,7 @@ export default function SelectCountry() {
                         <button
                             key={country.id}
                             onClick={() => handleSelectCountry(country)}
-                            className="w-full p-4 border border-gray-300 rounded-lg hover:bg-[var(--primary-light)] hover:border-[var(--primary)] transition-colors text-left"
+                            className="w-full p-4 border border-gray-300 rounded-lg hover:bg-[var(--primary-light)] hover:border-[var(--primary)] transition-colors text-left text-black font-medium"
                         >
                             {country.name}
                         </button>
