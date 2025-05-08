@@ -181,7 +181,7 @@ export default function Balance() {
                                                     </span>
                                                 </div>
                                             </div>
-                                            <div className="font-bold text-pink-600">
+                                            <div className="font-bold text-[var(--primary)]">
                                                 ${transaction.total.toFixed(2)}
                                             </div>
                                         </div>
