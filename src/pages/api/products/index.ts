@@ -63,23 +63,26 @@ export default async function handler(
     }
     
     if (req.method === 'POST') {
-      // For POST requests, we need a countryId to associate the product with
-      if (!countryId) {
-        return res.status(400).json({ 
-          message: 'Country ID is required to create products. Please select a country first.' 
-        });
-      }
-      
       try {
-        const { name, image, purchaseCost, sellingPrice, stock } = req.body;
+        const { name, image, purchaseCost, sellingPrice, stock, countryId: requestCountryId } = req.body;
         
         if (!name || !image || !purchaseCost || !sellingPrice || !stock) {
           return res.status(400).json({ message: 'Missing required fields' });
         }
+
+        // For admin users, allow them to specify a countryId in the request
+        // For regular users, use their session countryId
+        const productCountryId = role === 'admin' && requestCountryId ? requestCountryId : countryId;
+        
+        if (!productCountryId) {
+          return res.status(400).json({ 
+            message: 'Country ID is required to create products. Please select a country first.' 
+          });
+        }
         
         // Check if the country exists
         const country = await prisma.country.findUnique({
-          where: { id: countryId },
+          where: { id: productCountryId },
           select: { id: true }
         });
         
@@ -87,7 +90,7 @@ export default async function handler(
         if (!country) {
           await prisma.country.create({
             data: {
-              id: countryId,
+              id: productCountryId,
               name: session.user.countryName || "Iraq",
               pettyCash: 0,
             },
@@ -101,13 +104,13 @@ export default async function handler(
             purchaseCost: parseFloat(purchaseCost),
             sellingPrice: parseFloat(sellingPrice),
             stock: parseInt(stock),
-            countryId,
+            countryId: productCountryId,
           }
         });
         
         // Update petty cash
         await prisma.country.update({
-          where: { id: countryId },
+          where: { id: productCountryId },
           data: {
             pettyCash: {
               decrement: parseFloat(purchaseCost) * parseInt(stock),
