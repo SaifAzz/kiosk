@@ -302,7 +302,7 @@ export default function Login() {
                 {!showProfileCompletion ? (
                     <form onSubmit={showOtpInput ? handleVerifyOtp : handleSendOtp} className="space-y-6">
                         <div>
-                            <label htmlFor="email" className="block text-gray-700 mb-2 font-medium">
+                            <label htmlFor="email" className="block text-black mb-2 font-medium">
                                 Email Address
                             </label>
                             <input
@@ -310,7 +310,7 @@ export default function Login() {
                                 id="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-gray-900"
+                                className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-black"
                                 placeholder="Enter your email address"
                                 required
                                 disabled={showOtpInput}
@@ -319,7 +319,7 @@ export default function Login() {
 
                         {showOtpInput && (
                             <div>
-                                <label htmlFor="otp" className="block text-gray-700 mb-2 font-medium">
+                                <label htmlFor="otp" className="block text-black mb-2 font-medium">
                                     One-Time Password
                                 </label>
                                 <input
@@ -327,7 +327,7 @@ export default function Login() {
                                     id="otp"
                                     value={otp}
                                     onChange={(e) => setOtp(e.target.value)}
-                                    className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-gray-900"
+                                    className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-black"
                                     placeholder="Enter the OTP sent to your email"
                                     required
                                 />
@@ -343,7 +343,7 @@ export default function Login() {
                                 className="h-4 w-4 text-[var(--primary)] rounded border-gray-300 focus:ring-[var(--primary)]"
                                 disabled={showOtpInput}
                             />
-                            <label htmlFor="isAdmin" className="ml-2 block text-sm text-gray-700">
+                            <label htmlFor="isAdmin" className="ml-2 block text-sm text-black">
                                 I am an administrator
                             </label>
                         </div>
@@ -375,7 +375,7 @@ export default function Login() {
                 ) : (
                     <form onSubmit={handleCompleteProfile} className="space-y-6">
                         <div>
-                            <label htmlFor="phoneNumber" className="block text-gray-700 mb-2 font-medium">
+                            <label htmlFor="phoneNumber" className="block text-black mb-2 font-medium">
                                 Phone Number
                             </label>
                             <input
@@ -383,7 +383,7 @@ export default function Login() {
                                 id="phoneNumber"
                                 value={phoneNumber}
                                 onChange={(e) => setPhoneNumber(e.target.value)}
-                                className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-gray-900"
+                                className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--primary)] text-black"
                                 placeholder="Enter your phone number"
                                 required
                             />

@@ -130,7 +130,7 @@ export default function InventoryManagement() {
                     </Link>
                 </div>
                 <Link href="/admin/inventory/add">
-                    <button className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">
+                    <button className="bg-green-600 hover:bg-green-700 text-black py-2 px-4 rounded">
                         Add New Product
                     </button>
                 </Link>

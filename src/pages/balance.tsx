@@ -116,13 +116,13 @@ export default function Balance() {
                     <div className="grid grid-cols-2 text-center font-medium">
                         <button
                             onClick={() => setActiveTab('unsettled')}
-                            className={`py-3 ${activeTab === 'unsettled' ? 'bg-[#F9F0F5] text-[var(--primary)]' : 'bg-[#EEEEEE] text-gray-500'}`}
+                            className={`py-3 ${activeTab === 'unsettled' ? 'bg-[#F9F0F5] text-[var(--primary)]' : 'bg-[#EEEEEE] text-black'}`}
                         >
                             Unsettled
                         </button>
                         <button
                             onClick={() => setActiveTab('history')}
-                            className={`py-3 ${activeTab === 'history' ? 'bg-[#E1F1FE] text-blue-600' : 'bg-[#EEEEEE] text-gray-500'}`}
+                            className={`py-3 ${activeTab === 'history' ? 'bg-[#E1F1FE] text-blue-600' : 'bg-[#EEEEEE] text-black'}`}
                         >
                             History
                         </button>
@@ -131,7 +131,7 @@ export default function Balance() {
                     <div className="p-4">
                         {activeTab === 'unsettled' ? (
                             unsettledTransactions.length === 0 ? (
-                                <div className="text-center py-12 text-gray-500">
+                                <div className="text-center py-12 text-black">
                                     No unsettled transactions
                                 </div>
                             ) : (
@@ -139,12 +139,12 @@ export default function Balance() {
                                     {unsettledTransactions.map(transaction => (
                                         <div key={transaction.id} className="flex justify-between items-center py-3 border-b">
                                             <div>
-                                                <div className="text-gray-800">
+                                                <div className="text-black">
                                                     {transaction.items.map(item =>
                                                         `${item.product.name} x${item.quantity}`
                                                     ).join(', ')}
                                                 </div>
-                                                <div className="text-sm text-gray-500">{formatDate(transaction.createdAt)}</div>
+                                                <div className="text-sm text-black">{formatDate(transaction.createdAt)}</div>
                                             </div>
                                             <div className="font-bold text-[var(--primary)]">
                                                 ${transaction.total.toFixed(2)}
@@ -153,7 +153,7 @@ export default function Balance() {
                                     ))}
                                     <div className="mt-6 pt-4 border-t border-gray-300">
                                         <div className="flex justify-between items-center">
-                                            <span className="font-medium text-xl text-gray-700">Total Balance Due</span>
+                                            <span className="font-medium text-xl text-black">Total Balance Due</span>
                                             <span className="font-bold text-xl text-[var(--primary)]">${balance.toFixed(2)}</span>
                                         </div>
                                     </div>
@@ -161,7 +161,7 @@ export default function Balance() {
                             )
                         ) : (
                             settledTransactions.length === 0 ? (
-                                <div className="text-center py-12 text-gray-500">
+                                <div className="text-center py-12 text-black">
                                     No transaction history
                                 </div>
                             ) : (
@@ -169,12 +169,12 @@ export default function Balance() {
                                     {settledTransactions.map(transaction => (
                                         <div key={transaction.id} className="flex justify-between items-center py-3 border-b">
                                             <div>
-                                                <div className="text-gray-800">
+                                                <div className="text-black">
                                                     {transaction.items.map(item =>
                                                         `${item.product.name} x${item.quantity}`
                                                     ).join(', ')}
                                                 </div>
-                                                <div className="text-sm text-gray-500">{formatDate(transaction.createdAt)}</div>
+                                                <div className="text-sm text-black">{formatDate(transaction.createdAt)}</div>
                                                 <div className="mt-1">
                                                     <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold">
                                                         PAID
@@ -188,7 +188,7 @@ export default function Balance() {
                                     ))}
                                     <div className="mt-6 py-4 border-t border-gray-300">
                                         <div className="flex justify-between items-center">
-                                            <span className="text-gray-800 font-medium">Total paid:</span>
+                                            <span className="text-black font-medium">Total paid:</span>
                                             <span className="font-bold text-green-600">${totalPaidAllTime.toFixed(2)}</span>
                                         </div>
                                     </div>
