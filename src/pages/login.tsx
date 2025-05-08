@@ -63,9 +63,9 @@ export default function Login() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="min-h-screen flex items-center justify-center bg-[var(--primary-light)]">
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-                <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
+                <h1 className="text-2xl font-bold text-center mb-6 text-[var(--primary)]">Login</h1>
                 <div className="mb-4 text-center text-gray-600">
                     Country: {selectedCountry.name}
                 </div>
@@ -86,7 +86,7 @@ export default function Login() {
                             id="phoneNumber"
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
-                            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                             placeholder={isAdmin ? 'Enter username' : 'Enter phone number'}
                             required
                         />
@@ -101,7 +101,7 @@ export default function Login() {
                             id="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
                             placeholder="Enter password"
                             required
                         />
@@ -113,7 +113,7 @@ export default function Login() {
                                 type="checkbox"
                                 checked={isAdmin}
                                 onChange={() => setIsAdmin(!isAdmin)}
-                                className="mr-2"
+                                className="mr-2 accent-[var(--primary)]"
                             />
                             <span className="text-gray-700">Login as Admin</span>
                         </label>
@@ -123,8 +123,8 @@ export default function Login() {
                         type="submit"
                         disabled={loading}
                         className={`w-full py-3 rounded-md text-white font-medium ${loading
-                                ? 'bg-blue-400 cursor-not-allowed'
-                                : 'bg-blue-600 hover:bg-blue-700'
+                            ? 'bg-[var(--primary-light)] text-[var(--primary)] cursor-not-allowed'
+                            : 'bg-[var(--primary)] hover:bg-[var(--primary-dark)]'
                             }`}
                     >
                         {loading ? 'Logging in...' : 'Login'}
@@ -134,7 +134,7 @@ export default function Login() {
                 <div className="mt-4 text-center">
                     <button
                         onClick={() => router.push('/select-country')}
-                        className="text-blue-600 hover:underline"
+                        className="text-[var(--primary)] hover:underline"
                     >
                         Change Country
                     </button>

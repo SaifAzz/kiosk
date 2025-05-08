@@ -42,8 +42,8 @@ const ProductCard: React.FC<ProductProps> = ({ id, name, image, price, stock }) 
                     onClick={() => addToBasket(product)}
                     disabled={stock <= 0}
                     className={`mt-4 w-full py-2 px-4 rounded-md text-white font-medium ${stock > 0
-                            ? 'bg-blue-600 hover:bg-blue-700'
-                            : 'bg-gray-400 cursor-not-allowed'
+                        ? 'bg-[var(--primary)] hover:bg-[var(--primary-dark)]'
+                        : 'bg-gray-400 cursor-not-allowed'
                         }`}
                 >
                     {stock > 0 ? 'Add to Basket' : 'Out of Stock'}

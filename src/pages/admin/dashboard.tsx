@@ -82,9 +82,9 @@ export default function AdminDashboard() {
 
             {countryInfo && (
                 <div className="bg-white rounded-lg shadow p-6 mb-6">
-                    <h2 className="text-xl font-semibold mb-2">Country: {countryInfo.name}</h2>
+                    <h2 className="text-xl font-semibold mb-2 text-[var(--primary)]">Country: {countryInfo.name}</h2>
                     <p className="text-lg">
-                        Petty Cash Balance: <span className="font-bold">${countryInfo.pettyCash.toFixed(2)}</span>
+                        Petty Cash Balance: <span className="font-bold text-[var(--primary)]">${countryInfo.pettyCash.toFixed(2)}</span>
                     </p>
                 </div>
             )}
@@ -92,19 +92,19 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white rounded-lg shadow overflow-hidden">
                     <div className="p-6">
-                        <h2 className="text-xl font-semibold mb-4">Inventory Management</h2>
+                        <h2 className="text-xl font-semibold mb-4 text-[var(--primary)]">Inventory Management</h2>
                         <div className="space-y-4">
                             <Link href="/admin/inventory">
-                                <div className="block w-full p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
-                                    <h3 className="font-medium">View Inventory</h3>
-                                    <p className="text-sm text-gray-600">Manage product stock and prices</p>
+                                <div className="block w-full p-4 bg-[var(--primary-light)] hover:bg-[#fad5e5] rounded-lg transition-colors">
+                                    <h3 className="font-medium text-[var(--primary-dark)]">View Inventory</h3>
+                                    <p className="text-sm text-[var(--primary-dark)]">Manage product stock and prices</p>
                                 </div>
                             </Link>
 
                             <Link href="/admin/inventory/add">
-                                <div className="block w-full p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
-                                    <h3 className="font-medium">Add New Product</h3>
-                                    <p className="text-sm text-gray-600">Create a new product in the catalog</p>
+                                <div className="block w-full p-4 bg-[#f8e9f1] hover:bg-[var(--primary-light)] rounded-lg transition-colors">
+                                    <h3 className="font-medium text-[var(--primary-dark)]">Add New Product</h3>
+                                    <p className="text-sm text-[var(--primary-dark)]">Create a new product in the catalog</p>
                                 </div>
                             </Link>
                         </div>
@@ -113,19 +113,19 @@ export default function AdminDashboard() {
 
                 <div className="bg-white rounded-lg shadow overflow-hidden">
                     <div className="p-6">
-                        <h2 className="text-xl font-semibold mb-4">User Management</h2>
+                        <h2 className="text-xl font-semibold mb-4 text-[var(--primary)]">User Management</h2>
                         <div className="space-y-4">
                             <Link href="/admin/users">
-                                <div className="block w-full p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
-                                    <h3 className="font-medium">View Users</h3>
-                                    <p className="text-sm text-gray-600">Manage users and settle balances</p>
+                                <div className="block w-full p-4 bg-[#f8e9f1] hover:bg-[var(--primary-light)] rounded-lg transition-colors">
+                                    <h3 className="font-medium text-[var(--primary-dark)]">View Users</h3>
+                                    <p className="text-sm text-[var(--primary-dark)]">Manage users and settle balances</p>
                                 </div>
                             </Link>
 
                             <Link href="/admin/reports">
-                                <div className="block w-full p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors">
-                                    <h3 className="font-medium">Export Reports</h3>
-                                    <p className="text-sm text-gray-600">Generate and download reports</p>
+                                <div className="block w-full p-4 bg-[var(--primary-light)] hover:bg-[#fad5e5] rounded-lg transition-colors">
+                                    <h3 className="font-medium text-[var(--primary-dark)]">Export Reports</h3>
+                                    <p className="text-sm text-[var(--primary-dark)]">Generate and download reports</p>
                                 </div>
                             </Link>
                         </div>

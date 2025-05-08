@@ -41,9 +41,9 @@ export default function SelectCountry() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <div className="min-h-screen flex items-center justify-center bg-[var(--primary-light)]">
                 <div className="text-center">
-                    <h1 className="text-3xl font-bold text-gray-900">Loading...</h1>
+                    <h1 className="text-3xl font-bold text-[var(--primary)]">Loading...</h1>
                     <p className="mt-2 text-gray-600">Please wait while we load countries.</p>
                 </div>
             </div>
@@ -52,13 +52,13 @@ export default function SelectCountry() {
 
     if (error) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-100">
+            <div className="min-h-screen flex items-center justify-center bg-[var(--primary-light)]">
                 <div className="text-center">
                     <h1 className="text-3xl font-bold text-red-500">Error</h1>
                     <p className="mt-2 text-gray-600">{error}</p>
                     <button
                         onClick={() => window.location.reload()}
-                        className="mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+                        className="mt-4 bg-[var(--primary)] text-white py-2 px-4 rounded hover:bg-[var(--primary-dark)]"
                     >
                         Try Again
                     </button>
@@ -68,16 +68,16 @@ export default function SelectCountry() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="min-h-screen flex items-center justify-center bg-[var(--primary-light)]">
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-                <h1 className="text-2xl font-bold text-center mb-6">Select Country</h1>
+                <h1 className="text-2xl font-bold text-center mb-6 text-[var(--primary)]">Select Country</h1>
 
                 <div className="space-y-4">
                     {countries.map((country) => (
                         <button
                             key={country.id}
                             onClick={() => handleSelectCountry(country)}
-                            className="w-full p-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                            className="w-full p-4 border border-gray-300 rounded-lg hover:bg-[var(--primary-light)] hover:border-[var(--primary)] transition-colors text-left"
                         >
                             {country.name}
                         </button>

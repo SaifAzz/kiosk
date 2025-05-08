@@ -8,7 +8,7 @@ const Basket: React.FC = () => {
     if (basket.length === 0) {
         return (
             <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-xl font-semibold mb-4">Your Basket</h2>
+                <h2 className="text-xl font-semibold mb-4 text-[var(--primary)]">Your Basket</h2>
                 <p className="text-gray-500">Your basket is empty.</p>
             </div>
         );
@@ -16,7 +16,7 @@ const Basket: React.FC = () => {
 
     return (
         <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-xl font-semibold mb-4">Your Basket</h2>
+            <h2 className="text-xl font-semibold mb-4 text-[var(--primary)]">Your Basket</h2>
 
             <div className="space-y-4">
                 {basket.map((item) => (
@@ -56,7 +56,7 @@ const Basket: React.FC = () => {
             <div className="mt-6 pt-4 border-t">
                 <div className="flex justify-between items-center mb-4">
                     <span className="font-semibold">Total:</span>
-                    <span className="font-semibold text-lg">${basketTotal.toFixed(2)}</span>
+                    <span className="font-semibold text-lg text-[var(--primary)]">${basketTotal.toFixed(2)}</span>
                 </div>
 
                 <div className="flex justify-between">
@@ -68,7 +68,7 @@ const Basket: React.FC = () => {
                     </button>
 
                     <button
-                        className="py-2 px-6 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                        className="py-2 px-6 bg-[var(--primary)] text-white rounded-md hover:bg-[var(--primary-dark)]"
                     >
                         Checkout
                     </button>
