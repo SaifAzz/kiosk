@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #fdf2f6;
   --foreground: #171717;
   --primary: #d63b7d;
   --primary-light: #fde8f0;
@@ -29,4 +29,29 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Animation for the product notification */
+@keyframes fadeUpAndOut {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  85% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* Custom hover effects */
+.hover\:scale-102:hover {
+  transform: scale(1.02);
 }

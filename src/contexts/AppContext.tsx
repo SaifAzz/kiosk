@@ -14,6 +14,7 @@ type Product = {
     purchaseCost: number;
     sellingPrice: number;
     stock: number;
+    category?: string;
 };
 
 type BasketItem = {
@@ -22,6 +23,7 @@ type BasketItem = {
     price: number;
     name: string;
     image: string;
+    stock: number;
 };
 
 type AppContextType = {
@@ -32,6 +34,7 @@ type AppContextType = {
     basket: BasketItem[];
     addToBasket: (product: Product) => void;
     removeFromBasket: (productId: string) => void;
+    updateBasketQuantity: (productId: string, quantity: number) => void;
     clearBasket: () => void;
     basketTotal: number;
 };
@@ -50,15 +53,33 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     // Load selected country from localStorage on component mount
     useEffect(() => {
         const storedCountry = localStorage.getItem('selectedCountry');
+
+        // First priority: use country from localStorage
         if (storedCountry) {
             try {
                 setSelectedCountry(JSON.parse(storedCountry));
+                console.log("Setting country from localStorage:", JSON.parse(storedCountry).name);
             } catch (error) {
                 console.error('Failed to parse stored country:', error);
                 localStorage.removeItem('selectedCountry');
             }
         }
+        // Don't auto-fetch from session to ensure users go through login flow
     }, []);
+
+    // Function to fetch country details by ID - but don't call automatically
+    const fetchCountryById = async (countryId: string) => {
+        try {
+            const response = await fetch(`/api/countries/${countryId}`);
+            if (response.ok) {
+                const country = await response.json();
+                setSelectedCountry(country);
+                console.log("Fetched country by ID:", country.name);
+            }
+        } catch (error) {
+            console.error('Error fetching country:', error);
+        }
+    };
 
     // Save selected country to localStorage whenever it changes
     useEffect(() => {
@@ -124,6 +145,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
                     price: product.sellingPrice,
                     name: product.name,
                     image: product.image,
+                    stock: product.stock,
                 }];
             }
         });
@@ -150,6 +172,25 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         });
     };
 
+    // Update basket item quantity directly
+    const updateBasketQuantity = (productId: string, quantity: number) => {
+        setBasket(prev => {
+            const existingItemIndex = prev.findIndex(item => item.productId === productId);
+
+            if (existingItemIndex === -1) return prev;
+
+            // If quantity is 0 or less, remove the item
+            if (quantity <= 0) {
+                return prev.filter(item => item.productId !== productId);
+            }
+
+            // Otherwise, update the quantity
+            const updatedBasket = [...prev];
+            updatedBasket[existingItemIndex].quantity = quantity;
+            return updatedBasket;
+        });
+    };
+
     // Clear the basket
     const clearBasket = () => {
         setBasket([]);
@@ -164,6 +205,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             basket,
             addToBasket,
             removeFromBasket,
+            updateBasketQuantity,
             clearBasket,
             basketTotal,
         }}>

@@ -13,47 +13,35 @@ export default async function handler(
     return res.status(401).json({ message: 'Unauthorized' });
   }
   
-  const { countryId } = session.user;
+  const { id } = req.query;
   
+  if (!id || typeof id !== 'string') {
+    return res.status(400).json({ message: 'Invalid user ID' });
+  }
+
   if (req.method === 'GET') {
     try {
-      // Create a base query without the where clause
-      const queryOptions = {
+      const user = await prisma.user.findUnique({
+        where: {
+          id,
+        },
         select: {
           id: true,
           phoneNumber: true,
           balance: true,
+          countryId: true,
           createdAt: true,
           updatedAt: true,
-          transactions: {
-            where: {
-              settled: false,
-            },
-            select: {
-              id: true,
-              total: true,
-              createdAt: true,
-            },
-          },
         },
-        orderBy: {
-          phoneNumber: 'asc',
-        },
-      };
+      });
       
-      // Only add where filter if countryId is not null
-      const users = await prisma.user.findMany(
-        countryId 
-          ? {
-              ...queryOptions,
-              where: { countryId },
-            }
-          : queryOptions
-      );
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
       
-      return res.status(200).json(users);
+      return res.status(200).json(user);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error('Error fetching user:', error);
       return res.status(500).json({ message: 'Internal server error' });
     }
   }

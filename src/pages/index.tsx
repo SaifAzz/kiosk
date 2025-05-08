@@ -21,20 +21,23 @@ export default function Home() {
   const { selectedCountry } = useAppContext();
 
   useEffect(() => {
-    // If the user is not authenticated and we have a selected country, redirect to login
-    if (status === 'unauthenticated' && selectedCountry) {
-      router.push('/login');
-      return;
-    }
-
-    // If we don't have a selected country, redirect to country selection
+    // Always check for country selection first
     if (!selectedCountry) {
+      console.log("No country selected, redirecting to country selection");
       router.push('/select-country');
       return;
     }
 
-    // If the user is authenticated, redirect to the appropriate dashboard
+    // Then check authentication status
+    if (status === 'unauthenticated') {
+      console.log("User not authenticated, redirecting to login");
+      router.push('/login');
+      return;
+    }
+
+    // Only if both checks pass, redirect to the appropriate dashboard
     if (status === 'authenticated') {
+      console.log("User authenticated, redirecting to appropriate dashboard");
       if (session?.user?.role === 'admin') {
         router.push('/admin/dashboard');
       } else {
@@ -46,8 +49,20 @@ export default function Home() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900">Loading...</h1>
+        <div className="flex justify-center mb-4">
+          <Image
+            src="/products/wonder.webp"
+            alt="Wonder Beauties Logo"
+            width={150}
+            height={150}
+            className="mb-4"
+          />
+        </div>
+        <h1 className="text-3xl font-bold text-gray-900">Welcome to Wonder Beauties Kiosk</h1>
         <p className="mt-2 text-gray-600">Please wait while we redirect you.</p>
+        <div className="mt-6">
+          <div className="w-8 h-8 border-4 border-[var(--primary)] border-t-transparent rounded-full animate-spin mx-auto"></div>
+        </div>
       </div>
     </div>
   );

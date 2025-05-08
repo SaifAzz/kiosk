@@ -29,49 +29,41 @@ export default function InventoryManagement() {
     const [restockError, setRestockError] = useState('');
     const [restockSuccess, setRestockSuccess] = useState(false);
 
-    // Check if user is authenticated and is an admin
     useEffect(() => {
         if (status === 'unauthenticated') {
             router.push('/login');
-            return;
         }
+    }, [status, router]);
 
-        if (status === 'authenticated' && session?.user?.role !== 'admin') {
-            router.push('/catalog');
-        }
-    }, [status, session, router]);
-
-    // Load products
     useEffect(() => {
         const fetchProducts = async () => {
             if (!session) return;
-
             try {
                 setLoading(true);
                 const response = await fetch('/api/products');
-
                 if (!response.ok) {
-                    throw new Error('Failed to fetch products');
+                    setProducts([]);
+                    setError('Failed to load products. Please try again later.');
+                    return;
                 }
-
                 const data = await response.json();
                 setProducts(data);
+                setError('');
             } catch (err) {
-                console.error('Error fetching products:', err);
-                setError('Failed to load products');
+                setProducts([]);
+                setError('Failed to load products. Please check your connection and try again.');
             } finally {
                 setLoading(false);
             }
         };
 
-        if (session?.user?.role === 'admin') {
+        if (session) {
             fetchProducts();
         }
     }, [session]);
 
     const handleRestock = async (e: React.FormEvent) => {
         e.preventDefault();
-
         if (!restockProductId || !restockQuantity || parseInt(restockQuantity) <= 0) {
             setRestockError('Please enter a valid quantity');
             return;
@@ -83,13 +75,11 @@ export default function InventoryManagement() {
 
             const response = await fetch('/api/products/restock', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     productId: restockProductId,
                     quantity: parseInt(restockQuantity),
-                    ...(newCost ? { newCost: parseFloat(newCost) } : {}),
+                    ...(newCost ? { newCost: parseFloat(newCost) } : {})
                 }),
             });
 
@@ -98,34 +88,22 @@ export default function InventoryManagement() {
                 throw new Error(data.message || 'Failed to restock product');
             }
 
-            // Reset form and show success message
             setRestockSuccess(true);
             setRestockProductId(null);
             setRestockQuantity('');
             setNewCost('');
 
-            // Reload products
-            const productsResponse = await fetch('/api/products');
-            const productsData = await productsResponse.json();
-            setProducts(productsData);
+            const updatedProducts = await (await fetch('/api/products')).json();
+            setProducts(updatedProducts);
 
-            // Clear success message after 3 seconds
-            setTimeout(() => {
-                setRestockSuccess(false);
-            }, 3000);
-        } catch (err) {
-            if (err instanceof Error) {
-                setRestockError(err.message);
-            } else {
-                setRestockError('An error occurred during restocking');
-            }
-            console.error('Restock error:', err);
+            setTimeout(() => setRestockSuccess(false), 3000);
+        } catch (err: any) {
+            setRestockError(err.message || 'An error occurred during restocking');
         } finally {
             setRestockLoading(false);
         }
     };
 
-    // Show loading state
     if (status === 'loading' || (loading && !error)) {
         return (
             <Layout title="Inventory Management">
@@ -136,59 +114,57 @@ export default function InventoryManagement() {
         );
     }
 
-    // If not authenticated or not an admin, return null (will redirect)
-    if (status === 'unauthenticated' || (status === 'authenticated' && session?.user?.role !== 'admin')) {
-        return null;
-    }
-
     return (
         <Layout title="Inventory Management">
-            <div className="mb-6 flex justify-between items-center">
-                <Link href="/admin/dashboard">
-                    <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded transition-colors">
-                        ← Back to Dashboard
-                    </button>
-                </Link>
-
+            <div className="mb-6 flex justify-between items-center flex-wrap gap-3">
+                <div className="flex gap-3">
+                    <Link href="/admin/dashboard">
+                        <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded">
+                            ← Back to Dashboard
+                        </button>
+                    </Link>
+                    <Link href="/admin/users">
+                        <button className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
+                            Users
+                        </button>
+                    </Link>
+                </div>
                 <Link href="/admin/inventory/add">
-                    <button className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition-colors">
+                    <button className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">
                         Add New Product
                     </button>
                 </Link>
             </div>
 
             {error && (
-                <div className="bg-red-100 text-red-700 p-4 rounded mb-6">
+                <div className="bg-red-100 text-red-700 p-4 rounded mb-6 border border-red-200">
                     {error}
                 </div>
             )}
 
             {restockSuccess && (
-                <div className="bg-green-100 text-green-700 p-4 rounded mb-6">
+                <div className="bg-green-100 text-green-700 p-4 rounded mb-6 border border-green-200">
                     Product restocked successfully!
                 </div>
             )}
 
             {restockProductId && (
-                <div className="bg-white rounded-lg shadow p-6 mb-6">
+                <div className="bg-white rounded-lg shadow-md p-6 mb-6">
                     <h2 className="text-xl font-semibold mb-4">
                         Restock {products.find(p => p.id === restockProductId)?.name}
                     </h2>
 
                     {restockError && (
-                        <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
+                        <div className="bg-red-100 text-red-700 p-3 rounded mb-4 border border-red-200">
                             {restockError}
                         </div>
                     )}
 
                     <form onSubmit={handleRestock} className="space-y-4">
                         <div>
-                            <label className="block text-gray-700 mb-2" htmlFor="quantity">
-                                Quantity to Add
-                            </label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Quantity to Add</label>
                             <input
                                 type="number"
-                                id="quantity"
                                 value={restockQuantity}
                                 onChange={(e) => setRestockQuantity(e.target.value)}
                                 className="w-full p-2 border border-gray-300 rounded"
@@ -196,14 +172,10 @@ export default function InventoryManagement() {
                                 required
                             />
                         </div>
-
                         <div>
-                            <label className="block text-gray-700 mb-2" htmlFor="newCost">
-                                New Cost Price (optional)
-                            </label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">New Cost Price (optional)</label>
                             <input
                                 type="number"
-                                id="newCost"
                                 value={newCost}
                                 onChange={(e) => setNewCost(e.target.value)}
                                 className="w-full p-2 border border-gray-300 rounded"
@@ -211,19 +183,17 @@ export default function InventoryManagement() {
                                 step="0.01"
                             />
                         </div>
-
-                        <div className="flex space-x-4">
+                        <div className="flex gap-4">
                             <button
                                 type="submit"
                                 disabled={restockLoading}
                                 className={`py-2 px-4 rounded text-white ${restockLoading
-                                        ? 'bg-blue-400 cursor-not-allowed'
-                                        : 'bg-blue-600 hover:bg-blue-700'
+                                    ? 'bg-blue-400 cursor-not-allowed'
+                                    : 'bg-blue-600 hover:bg-blue-700'
                                     }`}
                             >
                                 {restockLoading ? 'Processing...' : 'Confirm Restock'}
                             </button>
-
                             <button
                                 type="button"
                                 onClick={() => setRestockProductId(null)}
@@ -244,54 +214,35 @@ export default function InventoryManagement() {
                         <p className="text-gray-500">No products available.</p>
                     ) : (
                         <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
+                            <table className="min-w-full divide-y divide-gray-200 text-sm">
+                                <thead className="bg-gray-50 text-gray-600 uppercase text-xs">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Product
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Cost
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Price
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Stock
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Actions
-                                        </th>
+                                        <th className="px-6 py-3 text-left font-medium">Product</th>
+                                        <th className="px-6 py-3 text-left font-medium">Cost</th>
+                                        <th className="px-6 py-3 text-left font-medium">Price</th>
+                                        <th className="px-6 py-3 text-left font-medium">Stock</th>
+                                        <th className="px-6 py-3 text-left font-medium">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {products.map((product) => (
                                         <tr key={product.id}>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center">
-                                                    <div className="h-10 w-10 relative mr-3">
-                                                        <Image
-                                                            src={product.image}
-                                                            alt={product.name}
-                                                            fill
-                                                            className="object-cover rounded"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <div className="text-sm font-medium text-gray-900">
-                                                            {product.name}
-                                                        </div>
-                                                    </div>
+                                            <td className="px-6 py-4 whitespace-nowrap flex items-center gap-3">
+                                                <div className="h-10 w-10 relative">
+                                                    <Image
+                                                        src={product.image}
+                                                        alt={product.name}
+                                                        fill
+                                                        className="rounded object-cover"
+                                                    />
                                                 </div>
+                                                <span className="font-medium text-gray-900">{product.name}</span>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                ${product.purchaseCost.toFixed(2)}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                ${product.sellingPrice.toFixed(2)}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product.stock > 10
+                                            <td className="px-6 py-4 text-gray-700">${product.purchaseCost.toFixed(2)}</td>
+                                            <td className="px-6 py-4 text-gray-700">${product.sellingPrice.toFixed(2)}</td>
+                                            <td className="px-6 py-4">
+                                                <span className={`px-2 py-1 rounded-full text-xs font-semibold
+                          ${product.stock > 10
                                                         ? 'bg-green-100 text-green-800'
                                                         : product.stock > 0
                                                             ? 'bg-yellow-100 text-yellow-800'
@@ -300,18 +251,13 @@ export default function InventoryManagement() {
                                                     {product.stock}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <td className="px-6 py-4">
                                                 <button
                                                     onClick={() => setRestockProductId(product.id)}
-                                                    className="text-blue-600 hover:text-blue-900 mr-3"
+                                                    className="text-blue-600 hover:text-blue-800 font-medium"
                                                 >
                                                     Restock
                                                 </button>
-                                                <Link href={`/admin/inventory/${product.id}`}>
-                                                    <span className="text-indigo-600 hover:text-indigo-900">
-                                                        Edit
-                                                    </span>
-                                                </Link>
                                             </td>
                                         </tr>
                                     ))}
@@ -323,4 +269,4 @@ export default function InventoryManagement() {
             </div>
         </Layout>
     );
-} 
+}

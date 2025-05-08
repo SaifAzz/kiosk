@@ -22,6 +22,13 @@ export default async function handler(
   
   if (req.method === 'GET') {
     try {
+      // If countryId is null for admin, ask them to select a country
+      if (!countryId) {
+        return res.status(400).json({ 
+          message: 'Please select a country to generate the report.'
+        });
+      }
+      
       const country = await prisma.country.findUnique({
         where: { id: countryId },
       });

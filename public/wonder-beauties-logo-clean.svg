@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <!-- Main "Wonder" text -->
+  <g id="wonder-text">
+    <!-- W letter in orange -->
+    <path d="M80,180 C120,100 150,200 170,250 C180,280 190,300 200,280 C210,250 220,180 250,100 C260,80 270,70 280,80 C290,90 300,130 250,300" 
+          fill="#FF6B37" stroke="#FF6B37" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+          
+    <!-- "onder" in black -->
+    <path d="M300,120 C330,100 360,100 380,120 C400,140 400,180 380,240 C360,300 320,320 290,300 C270,290 260,260 280,200"
+          fill="none" stroke="#000" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <path d="M420,140 C440,110 470,110 490,130 C520,160 490,220 460,260 C440,280 410,280 390,250 C380,230 380,200 420,160"
+          fill="none" stroke="#000" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+          
+    <path d="M510,120 C540,100 570,120 580,150 C590,190 550,270 520,320 C515,330 500,340 480,320 C470,310 470,290 480,260 C500,200 530,160 560,120"
+          fill="none" stroke="#000" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+          
+    <path d="M590,140 C620,110 650,120 670,150 C690,180 690,230 660,280 C630,320 590,320 570,280 C550,250 570,190 610,150"
+          fill="none" stroke="#000" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  
+  <!-- Arabic "بيوتي" text -->
+  <g id="beauties-text">
+    <path d="M360,340 C330,350 310,370 320,390 C330,410 350,400 370,380 C390,360 380,340 350,340 Z" 
+          fill="none" stroke="#000" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          
+    <!-- The و character with orange fill -->
+    <path d="M420,340 C390,350 370,370 380,390 C390,410 410,400 430,380 C450,360 440,340 410,340 Z" 
+          fill="#FF6B37" stroke="#000" stroke-width="2"/>
+          
+    <path d="M480,330 C450,350 440,380 460,390 C480,400 510,380 520,350 C530,320 510,310 490,330"
+          fill="none" stroke="#000" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          
+    <path d="M540,340 C510,360 500,380 520,390 C540,400 570,380 580,350 C590,320 570,310 550,330 C540,340 530,360 530,380"
+          fill="none" stroke="#000" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          
+    <path d="M600,340 C570,360 560,380 580,390 C600,400 630,380 640,350 C650,320 630,310 610,330"
+          fill="none" stroke="#000" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg> 

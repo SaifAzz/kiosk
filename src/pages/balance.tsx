@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import Layout from '../components/Layout';
+import KioskLayout from '../components/KioskLayout';
 
 type Transaction = {
     id: string;
@@ -77,11 +77,11 @@ export default function Balance() {
     // Show loading state
     if (status === 'loading' || (loading && !error)) {
         return (
-            <Layout title="My Balance">
+            <KioskLayout title="My Balance">
                 <div className="text-center py-10">
                     <p className="text-xl">Loading...</p>
                 </div>
-            </Layout>
+            </KioskLayout>
         );
     }
 
@@ -90,83 +90,135 @@ export default function Balance() {
         return null;
     }
 
+    // Split transactions into unsettled and settled
+    const unsettledTransactions = transactions.filter(t => !t.settled);
+    const settledTransactions = transactions.filter(t => t.settled);
+
+    // Calculate total paid this month
+    const currentDate = new Date();
+    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const totalPaidThisMonth = settledTransactions
+        .filter(t => new Date(t.createdAt) >= firstDayOfMonth)
+        .reduce((sum, t) => sum + t.total, 0);
+
     return (
-        <Layout title="My Balance">
+        <KioskLayout title="My Balance">
             {error && (
                 <div className="bg-red-100 text-red-700 p-4 rounded mb-6">
                     {error}
                 </div>
             )}
 
-            <div className="bg-white rounded-lg shadow overflow-hidden mb-6">
-                <div className="p-6">
-                    <h2 className="text-2xl font-semibold">Current Balance</h2>
-                    <p className="text-3xl font-bold mt-2">${balance.toFixed(2)}</p>
-                </div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow overflow-hidden">
-                <div className="p-6">
-                    <h2 className="text-2xl font-semibold mb-4">Transaction History</h2>
-
-                    {transactions.length === 0 ? (
-                        <p className="text-gray-500">No transactions yet.</p>
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Date
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Items
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Total
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Status
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {transactions.map((transaction) => (
-                                        <tr key={transaction.id}>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {formatDate(transaction.createdAt)}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="text-sm text-gray-900">
-                                                    {transaction.items.map((item, index) => (
-                                                        <div key={item.id}>
-                                                            {item.quantity} x {item.product.name}
-                                                            {index < transaction.items.length - 1 ? ', ' : ''}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                ${transaction.total.toFixed(2)}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span
-                                                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${transaction.settled
-                                                            ? 'bg-green-100 text-green-800'
-                                                            : 'bg-yellow-100 text-yellow-800'
-                                                        }`}
-                                                >
-                                                    {transaction.settled ? 'Paid' : 'Unpaid'}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* My Balance Panel */}
+                <div className="bg-white rounded-lg shadow overflow-hidden">
+                    <div className="p-4 bg-gray-100 border-b">
+                        <h2 className="text-xl font-bold text-center">My Balance</h2>
+                        <div className="flex mt-2">
+                            <div className="w-1/2 text-center">
+                                <div className="bg-blue-100 py-2 px-4 mx-2 rounded-t-lg">
+                                    <span className="text-blue-800 font-bold">Unsettled</span>
+                                </div>
+                            </div>
+                            <div className="w-1/2 text-center">
+                                <div className="bg-gray-200 py-2 px-4 mx-2 rounded-t-lg">
+                                    <span className="text-gray-600">History</span>
+                                </div>
+                            </div>
                         </div>
-                    )}
+                    </div>
+                    <div className="p-4">
+                        {unsettledTransactions.length === 0 ? (
+                            <div className="text-center py-6 text-gray-500">
+                                No unsettled transactions
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                {unsettledTransactions.map(transaction => (
+                                    <div key={transaction.id} className="p-3 border rounded-lg">
+                                        <div className="flex justify-between">
+                                            <div className="font-medium">
+                                                {transaction.items.map(item =>
+                                                    `${item.product.name} x${item.quantity}`
+                                                ).join(', ')}
+                                            </div>
+                                            <div className="text-gray-500">
+                                                {formatDate(transaction.createdAt)}
+                                            </div>
+                                        </div>
+                                        <div className="text-right font-bold mt-2 text-[var(--primary)]">
+                                            ${transaction.total.toFixed(2)}
+                                        </div>
+                                    </div>
+                                ))}
+                                <div className="mt-4 py-3 border-t border-gray-200">
+                                    <div className="flex justify-between items-center">
+                                        <span className="font-bold text-xl">Total Balance Due</span>
+                                        <span className="font-bold text-xl text-[var(--primary)]">${balance.toFixed(2)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Transaction History Panel */}
+                <div className="bg-white rounded-lg shadow overflow-hidden">
+                    <div className="p-4 bg-gray-100 border-b">
+                        <h2 className="text-xl font-bold text-center">Transaction History</h2>
+                        <div className="flex mt-2">
+                            <div className="w-1/2 text-center">
+                                <div className="bg-gray-200 py-2 px-4 mx-2 rounded-t-lg">
+                                    <span className="text-gray-600">Unsettled</span>
+                                </div>
+                            </div>
+                            <div className="w-1/2 text-center">
+                                <div className="bg-blue-100 py-2 px-4 mx-2 rounded-t-lg">
+                                    <span className="text-blue-800 font-bold">History</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="p-4">
+                        {settledTransactions.length === 0 ? (
+                            <div className="text-center py-6 text-gray-500">
+                                No transaction history
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                {settledTransactions.map(transaction => (
+                                    <div key={transaction.id} className="p-3 border rounded-lg">
+                                        <div className="flex justify-between">
+                                            <div className="font-medium">
+                                                {transaction.items.map(item =>
+                                                    `${item.product.name} x${item.quantity}`
+                                                ).join(', ')}
+                                            </div>
+                                            <div className="text-gray-500">
+                                                {formatDate(transaction.createdAt)}
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-between items-center mt-2">
+                                            <div className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold">
+                                                PAID
+                                            </div>
+                                            <div className="font-bold">
+                                                ${transaction.total.toFixed(2)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                <div className="mt-4 py-3 border-t border-gray-200">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-gray-600">Total paid this month:</span>
+                                        <span className="font-bold text-green-600">${totalPaidThisMonth.toFixed(2)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
-        </Layout>
+        </KioskLayout>
     );
 } 

@@ -16,6 +16,7 @@ datasource db {
 model Country {
   id             String          @id @default(cuid())
   name           String          @unique
+  code           String?         // Made optional for existing data
   users          User[]
   admins         Admin[]
   products       Product[]
@@ -28,6 +29,7 @@ model Country {
 model User {
   id             String          @id @default(cuid())
   phoneNumber    String          @unique
+  email          String?         // Optional for existing data
   password       String
   country        Country         @relation(fields: [countryId], references: [id])
   countryId      String
@@ -35,16 +37,23 @@ model User {
   balance        Float           @default(0)
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
+  otpCode        String?         // Added for OTP functionality
+  otpExpiry      DateTime?       // Added for OTP functionality
+
+  @@index([email])
 }
 
 model Admin {
   id             String          @id @default(cuid())
   username       String          @unique
+  email          String?         // Optional for existing data
   password       String
   country        Country         @relation(fields: [countryId], references: [id])
   countryId      String
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
+  otpCode        String?         // Added for OTP functionality
+  otpExpiry      DateTime?       // Added for OTP functionality
 }
 
 model Product {
