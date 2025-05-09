@@ -37,6 +37,10 @@ export default function Login() {
         setShowProfileCompletion(false);
         setError('');
         setOtpSent(false);
+        // Ensure isAdmin is false when switching to new user flow
+        if (!isNewUserFlow) { // This will be true when switching TO new user flow
+            setIsAdmin(false);
+        }
     };
 
     const handleSendOtp = async (e: React.FormEvent) => {
@@ -278,7 +282,10 @@ export default function Login() {
                             </button>
                             <button
                                 className={`px-4 py-2 rounded-md text-sm font-medium ${isNewUserFlow ? 'bg-white shadow-sm text-[var(--primary)]' : 'text-gray-500'}`}
-                                onClick={() => setIsNewUserFlow(true)}
+                                onClick={() => {
+                                    setIsNewUserFlow(true);
+                                    setIsAdmin(false);
+                                }}
                             >
                                 New User
                             </button>
@@ -334,19 +341,22 @@ export default function Login() {
                             </div>
                         )}
 
-                        <div className="flex items-center">
-                            <input
-                                type="checkbox"
-                                id="isAdmin"
-                                checked={isAdmin}
-                                onChange={(e) => setIsAdmin(e.target.checked)}
-                                className="h-4 w-4 text-[var(--primary)] rounded border-gray-300 focus:ring-[var(--primary)]"
-                                disabled={showOtpInput}
-                            />
-                            <label htmlFor="isAdmin" className="ml-2 block text-sm text-black">
-                                I am an administrator
-                            </label>
-                        </div>
+                        {/* Only show admin checkbox for existing users */}
+                        {!isNewUserFlow && (
+                            <div className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    id="isAdmin"
+                                    checked={isAdmin}
+                                    onChange={(e) => setIsAdmin(e.target.checked)}
+                                    className="h-4 w-4 text-[var(--primary)] rounded border-gray-300 focus:ring-[var(--primary)]"
+                                    disabled={showOtpInput}
+                                />
+                                <label htmlFor="isAdmin" className="ml-2 block text-sm text-black">
+                                    I am an administrator
+                                </label>
+                            </div>
+                        )}
 
                         <button
                             type="submit"

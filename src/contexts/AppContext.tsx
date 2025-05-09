@@ -99,23 +99,40 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
     // Load products with throttling to prevent excessive API calls
     const loadProducts = async () => {
-        if (!session) return;
-
-        // Throttle requests - only allow one every 5 seconds
-        const now = Date.now();
-        if (isLoading.current || (now - lastLoadTime.current < 5000 && products.length > 0)) {
+        if (!session) {
+            console.log('No session available, cannot load products');
             return;
         }
 
+        if (!selectedCountry) {
+            console.log('No country selected, cannot load products');
+            return;
+        }
+
+        // Throttle requests - only allow one every 5 seconds
+        const now = Date.now();
+        if (isLoading.current) {
+            console.log('Already loading products, skipping request');
+            return;
+        }
+
+        if (now - lastLoadTime.current < 5000 && products.length > 0) {
+            console.log('Products recently loaded, using cached data');
+            return;
+        }
+
+        console.log('Fetching products from database...');
         isLoading.current = true;
         try {
             const response = await fetch('/api/products');
             if (response.ok) {
                 const data = await response.json();
+                console.log(`Successfully loaded ${data.length} products from database`);
                 setProducts(data);
                 lastLoadTime.current = Date.now();
             } else {
-                console.error('Failed to fetch products');
+                const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+                console.error('Failed to fetch products:', response.status, errorData.message);
             }
         } catch (error) {
             console.error('Error loading products:', error);

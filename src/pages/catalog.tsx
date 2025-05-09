@@ -36,9 +36,19 @@ export default function Catalog() {
 
         // Load products when authenticated
         if (status === 'authenticated') {
-            loadProducts();
+            setLoading(true);
+            loadProducts()
+                .then(() => {
+                    setLoading(false);
+                    setError('');
+                })
+                .catch(err => {
+                    console.error("Error loading products:", err);
+                    setError('Failed to load products. Please refresh the page.');
+                    setLoading(false);
+                });
         }
-    }, [status, router, session, loadProducts, selectedCountry]);
+    }, [status, router, loadProducts, selectedCountry]);
 
     // Extract unique categories
     useEffect(() => {

@@ -10,7 +10,7 @@ export default function AddProduct() {
     const router = useRouter();
     const [formData, setFormData] = useState({
         name: '',
-        image: '',
+        image: '/products/images2.jpeg',
         purchaseCost: '',
         sellingPrice: '',
         stock: '',
@@ -70,11 +70,10 @@ export default function AddProduct() {
         const imageUrl = URL.createObjectURL(file);
         setImagePreview(imageUrl);
 
-        // In a real application, you would upload the file to a server/storage service
-        // For now, we'll store the file name as if it would be saved to /products/
+        // Always use the default image path regardless of uploaded file
         setFormData(prev => ({
             ...prev,
-            image: `/products/${file.name}`
+            image: '/products/images2.jpeg'
         }));
     };
 
@@ -82,10 +81,16 @@ export default function AddProduct() {
         e.preventDefault();
 
         // Basic validation
-        if (!formData.name || !formData.image || !formData.purchaseCost || !formData.sellingPrice || !formData.stock || !formData.countryId) {
+        if (!formData.name || !formData.purchaseCost || !formData.sellingPrice || !formData.stock || !formData.countryId) {
             setError('All fields are required');
             return;
         }
+
+        // Ensure image is always the default path
+        const productData = {
+            ...formData,
+            image: '/products/images2.jpeg'
+        };
 
         try {
             setLoading(true);
@@ -96,7 +101,7 @@ export default function AddProduct() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(productData),
             });
 
             if (!response.ok) {
@@ -108,7 +113,7 @@ export default function AddProduct() {
             setSuccess(true);
             setFormData({
                 name: '',
-                image: '',
+                image: '/products/images2.jpeg',
                 purchaseCost: '',
                 sellingPrice: '',
                 stock: '',
@@ -245,12 +250,13 @@ export default function AddProduct() {
                                 name="image"
                                 value={formData.image}
                                 onChange={handleChange}
-                                className="w-full p-3 border border-gray-300 rounded text-black"
-                                placeholder="/products/example.jpg"
+                                className="w-full p-3 border border-gray-300 rounded text-black bg-gray-100"
+                                placeholder="/products/images2.jpeg"
                                 required
+                                readOnly
                             />
                             <p className="text-sm text-gray-500">
-                                Image path (automatically filled when uploading, or enter manually)
+                                Default image path (used for all products)
                             </p>
                         </div>
                     </div>

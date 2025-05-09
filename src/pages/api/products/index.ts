@@ -3,6 +3,15 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../auth/[...nextauth]';
 import { prisma } from '../../../lib/prisma';
 
+// Extended session user type to include countryName
+interface SessionUser {
+  id: string;
+  name: string;
+  role: string;
+  countryId: string | null;
+  countryName?: string;
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -14,7 +23,8 @@ export default async function handler(
       return res.status(401).json({ message: 'Unauthorized' });
     }
     
-    const { countryId, role } = session.user;
+    const { countryId, role } = session.user as SessionUser;
+    const sessionUser = session.user as SessionUser;
     
     // For admin users, we'll allow them to proceed even with null countryId
     if (!countryId && role !== 'admin') {
@@ -40,12 +50,14 @@ export default async function handler(
             await prisma.country.create({
               data: {
                 id: countryId,
-                name: session.user.countryName || "Iraq",
+                name: sessionUser.countryName || "Iraq",
                 pettyCash: 0,
               },
             });
           }
         }
+        
+        console.log(`Fetching products for ${countryId ? `country: ${countryId}` : 'all countries (admin)'}`);
         
         // If countryId is null (for admin), get all products, otherwise filter by countryId
         const products = await prisma.product.findMany({
@@ -54,6 +66,8 @@ export default async function handler(
             name: 'asc',
           }
         });
+        
+        console.log(`Successfully fetched ${products.length} products`);
         
         return res.status(200).json(products);
       } catch (error) {
@@ -91,7 +105,7 @@ export default async function handler(
           await prisma.country.create({
             data: {
               id: productCountryId,
-              name: session.user.countryName || "Iraq",
+              name: sessionUser.countryName || "Iraq",
               pettyCash: 0,
             },
           });
